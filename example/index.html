@@ -2,23 +2,23 @@
 <script src='../build/build.js'></script>
 <style>
 #draggable {
-  position: relative;
-  top: 0;
-  border: 1px solid #ddd;
+  position: absolute;
+  background: #eee;
   width: 100px;
   height: 100px;
   cursor: move;
-  left: 0;
   -webkit-transition: all 0.3s;
   transition: all 0.3s;
-}#parent {
+}
+
+#parent {
   height: 300px;
   border: 1px solid #999;
+  margin-top: 40px;
 }
-#handle {
-  background: blue;
-  width: 10px;
-  height: 10px;
+
+#html {
+  position: relative;
 }
 
 #draggable.dragging {
@@ -43,5 +43,10 @@ var parent = document.querySelector('#parent');
 var handle = document.querySelector('#handle');
 var draggable = require('draggable')(el);
 draggable
+  .containment(parent)
   .build();
+
+draggable.on('end', function(){
+  console.log(draggable.ox, draggable.oy);
+});
 </script>

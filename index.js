@@ -60,13 +60,19 @@ Draggable.prototype.build = function(){
 Draggable.prototype.onmousedown = function(e){
   e.preventDefault();
   if (e.touches) e = e.touches[0];
-  var rect = this.rect = this.el.getBoundingClientRect();
-  this.ox = rect.left - el.offsetLeft;
-  this.oy = rect.top - el.offsetTop;
-  this.x = e.pageX - rect.left;
-  this.y = e.pageY - rect.top;
+  this.getCurrentPosition();
+  this.x = e.pageX - this.ox;
+  this.y = e.pageY - this.oy;
   classes(this.el).add('dragging');
   this.emit('start');
+};
+
+Draggable.prototype.getCurrentPosition = function(){
+  var rect = this.el.getBoundingClientRect();
+  var parentRect = this.el.parentNode.getBoundingClientRect();
+  this.ox = rect.left - parentRect.left;
+  this.oy = rect.top - parentRect.top;
+  return {x : this.ox, y: this.oy };
 };
 
 /**
@@ -75,12 +81,9 @@ Draggable.prototype.onmousedown = function(e){
 
 Draggable.prototype.onmousemove = function(e){
   if (e.touches) e = e.touches[0];
-  var styles = this.el.style
-    , x = this._xAxis ? e.pageX - this.x : this.ox
-    , y = this._yAxis ? e.pageY - this.y : this.oy
-    , rel = this.el
-    , el
-    , o;
+  var x = this._xAxis ? (e.pageX - this.x) : this.ox;
+  var y = this._yAxis ? (e.pageY - this.y) : this.oy;
+  var o, el, rel = this.el;
 
   // support containment
   if (el = this._containment) {
@@ -100,7 +103,7 @@ Draggable.prototype.onmousemove = function(e){
   translate(this.el, x, y);
 
   // all done.
-  this.emit('drag');
+  this.emit('drag', x, y);
 };
 
 /**
@@ -109,6 +112,7 @@ Draggable.prototype.onmousemove = function(e){
 
 Draggable.prototype.onmouseup = function(e){
   classes(this.el).remove('dragging');
+  this.getCurrentPosition();
   this.emit('end');
 };
 
