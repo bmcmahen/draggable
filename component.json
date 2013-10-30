@@ -11,7 +11,8 @@
     "ui-component/mouse": "*",
     "component/events": "*",
     "component/translate": "*",
-    "component/classes": "*"
+    "component/classes": "*",
+    "component/debounce": "*"
   },
   "development": {},
   "license": "MIT",

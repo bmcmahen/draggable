@@ -3,11 +3,12 @@
  * dependencies.
  */
 
-var emitter = require('emitter')
-  , mouse = require('mouse')
-  , events = require('events')
-  , translate = require('translate')
-  , classes = require('classes');
+var emitter = require('emitter');
+var mouse = require('mouse');
+var events = require('events');
+var translate = require('translate');
+var classes = require('classes');
+var debounce = require('debounce');
 
 /**
  * export `Draggable`.
@@ -75,6 +76,11 @@ Draggable.prototype.getCurrentPosition = function(){
   return {x : this.ox, y: this.oy };
 };
 
+
+var debouncedPause = debounce(function(x, y){
+  this.emit('pause', x, y);
+}, 350);
+
 /**
  * on-mousemove
  */
@@ -104,11 +110,15 @@ Draggable.prototype.onmousemove = function(e){
 
   // all done.
   this.emit('drag', x, y);
+
+  // add 'pause' event
+  debouncedPause.call(this, x, y);
 };
 
 /**
  * on-mouseup
  */
+
 
 Draggable.prototype.onmouseup = function(e){
   classes(this.el).remove('dragging');
