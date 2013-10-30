@@ -78,7 +78,7 @@ Draggable.prototype.getCurrentPosition = function(){
 
 
 var debouncedPause = debounce(function(x, y){
-  this.emit('pause', x, y);
+  if (this.dragging) this.emit('pause', x, y);
 }, 350);
 
 /**
@@ -90,6 +90,7 @@ Draggable.prototype.onmousemove = function(e){
   var x = this._xAxis ? (e.pageX - this.x) : this.ox;
   var y = this._yAxis ? (e.pageY - this.y) : this.oy;
   var o, el, rel = this.el;
+  this.dragging = true;
 
   // support containment
   if (el = this._containment) {
@@ -122,6 +123,7 @@ Draggable.prototype.onmousemove = function(e){
 
 Draggable.prototype.onmouseup = function(e){
   classes(this.el).remove('dragging');
+  this.dragging = false;
   this.getCurrentPosition();
   this.emit('end');
 };

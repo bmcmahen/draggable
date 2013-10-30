@@ -49,4 +49,8 @@ draggable
 draggable.on('end', function(){
   console.log(draggable.ox, draggable.oy);
 });
+
+draggable.on('pause', function(){
+  console.log('pause');
+});
 </script>
