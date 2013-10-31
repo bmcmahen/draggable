@@ -43,7 +43,8 @@ var parent = document.querySelector('#parent');
 var handle = document.querySelector('#handle');
 var draggable = require('draggable')(el);
 draggable
-  .containment(parent, { middleX : true })
+  .containment(parent)
+  .minLeft(40)
   .build();
 
 draggable.on('end', function(){

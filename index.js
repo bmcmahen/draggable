@@ -29,6 +29,7 @@ function Draggable(el){
   this._xAxis = true;
   this._yAxis = true;
   this.el = el;
+  this.getCurrentPosition();
 }
 
 /**
@@ -100,31 +101,13 @@ Draggable.prototype.onmousemove = function(e){
     o.width = el.clientWidth;
     o.h = o.height - rel.clientHeight;
     o.w = o.width - rel.clientWidth;
-    halfWidth = rel.clientWidth / 2;
-    halfHeight = rel.clientHeight / 2;
-
-    // optionally contain to the middle of the element
-    // x-axis
-    if (this._containMiddleX){
-      if (-halfWidth >=x) x = -halfWidth;
-      if (o.x >= o.width + halfWidth) x = o.w + halfWidth;
-    } else {
-      if (0 >= x) x = 0;
-      if (o.x >= o.width) x = o.w;
-    }
-
-    
-    if (this._containMiddleY){
-      if (-halfHeight >= y) y = -halfHeight;
-      if (o.y >= o.height + halfHeight) y = o.h + halfHeight;
-    } else {
-      if (0 >= y) y = 0;
-      if (o.y >= o.height) y = o.h;
-    }
+    if ((this._minLeft || 0) >= x) x = this._minLeft || 0;
+    if (o.x >= (this._maxLeft || o.width)) x = this._maxLeft || o.w;
+    if ((this._minTop || 0) >= y) y = this._minTop || 0;
+    if (o.y >= (this._maxTop || o.height)) y = this._maxTop || o.h;
   }
 
   // move draggable.
-  // translate(this.el, x, y);
   this.moveTo(x, y);
 
   // all done.
@@ -183,14 +166,11 @@ Draggable.prototype.disableYAxis = function(){
  * @param  {Element} el 
  * @return {Draggable}    
  */
+// alternatively allow specific values?
+// like minX: 10
+// maxX: 50
 
-Draggable.prototype.containment = function(el, options){
-  // Sometimes you only want the draggable element contained to its 
-  // middle, such as when making a slider. This is kinda an icky
-  // api. 
-  options = options || {};
-  if (options.middleX) this._containMiddleX = true;
-  if (options.middleY) this._containMiddleY = true;
+Draggable.prototype.containment = function(el){
   this._containment = el;
   return this;
 };
@@ -218,3 +198,24 @@ Draggable.prototype.moveTo = function(x, y){
   translate(this.el, x, y);
   return this;
 };
+
+
+Draggable.prototype.minLeft = function(x){
+  this._minLeft = x;
+  return this;
+};
+
+Draggable.prototype.maxLeft = function(x){
+  this._maxLeft = x;
+  return this;
+};
+
+Draggable.prototype.minTop = function(y){
+  this._minTop = y;
+  return this;
+};
+
+Draggable.prototype.maxTop = function(y){
+  this._maxTop = y;
+  return this;
+}
