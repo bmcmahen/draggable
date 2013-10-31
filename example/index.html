@@ -45,6 +45,7 @@ var draggable = require('draggable')(el);
 draggable
   .containment(parent)
   .minLeft(40)
+  .maxLeft(100)
   .build();
 
 draggable.on('end', function(){

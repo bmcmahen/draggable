@@ -101,8 +101,19 @@ Draggable.prototype.onmousemove = function(e){
     o.width = el.clientWidth;
     o.h = o.height - rel.clientHeight;
     o.w = o.width - rel.clientWidth;
-    if ((this._minLeft || 0) >= x) x = this._minLeft || 0;
-    if (o.x >= (this._maxLeft || o.width)) x = this._maxLeft || o.w;
+    // override minleft
+    if (this._minLeft) {
+      if (this._minLeft >= x) x = this._minLeft;
+    } else {
+      if (0 >= x) x = 0;
+    }
+    // override maxleft
+    if (this._maxLeft){
+      if (o.x >= this._maxLeft) x = (this._maxLeft - rel.clientWidth);
+    } else {
+      if (o.x >= o.width) x = o.w;
+    }
+
     if ((this._minTop || 0) >= y) y = this._minTop || 0;
     if (o.y >= (this._maxTop || o.height)) y = this._maxTop || o.h;
   }
