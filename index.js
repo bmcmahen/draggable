@@ -89,7 +89,7 @@ Draggable.prototype.onmousemove = function(e){
   if (e.touches) e = e.touches[0];
   var x = this._xAxis ? (e.pageX - this.x) : this.ox;
   var y = this._yAxis ? (e.pageY - this.y) : this.oy;
-  var o, el, rel = this.el;
+  var o, el, halfHeight, halfWidth, rel = this.el;
   this.dragging = true;
 
   // support containment
@@ -100,19 +100,37 @@ Draggable.prototype.onmousemove = function(e){
     o.width = el.clientWidth;
     o.h = o.height - rel.clientHeight;
     o.w = o.width - rel.clientWidth;
-    if (0 >= x) x = 0;
-    if (0 >= y) y = 0;
-    if (o.y >= o.height) y = o.h;
-    if (o.x >= o.width) x = o.w;
+    halfWidth = rel.clientWidth / 2;
+    halfHeight = rel.clientHeight / 2;
+
+    // optionally contain to the middle of the element
+    // x-axis
+    if (this._containMiddleX){
+      if (-halfWidth >=x) x = -halfWidth;
+      if (o.x >= o.width + halfWidth) x = o.w + halfWidth;
+    } else {
+      if (0 >= x) x = 0;
+      if (o.x >= o.width) x = o.w;
+    }
+
+    
+    if (this._containMiddleY){
+      if (-halfHeight >= y) y = -halfHeight;
+      if (o.y >= o.height + halfHeight) y = o.h + halfHeight;
+    } else {
+      if (0 >= y) y = 0;
+      if (o.y >= o.height) y = o.h;
+    }
   }
 
   // move draggable.
-  translate(this.el, x, y);
+  // translate(this.el, x, y);
+  this.moveTo(x, y);
 
   // all done.
   this.emit('drag', x, y);
 
-  // add 'pause' event
+  // call debounced pause
   debouncedPause.call(this, x, y);
 };
 
@@ -166,7 +184,13 @@ Draggable.prototype.disableYAxis = function(){
  * @return {Draggable}    
  */
 
-Draggable.prototype.containment = function(el){
+Draggable.prototype.containment = function(el, options){
+  // Sometimes you only want the draggable element contained to its 
+  // middle, such as when making a slider. This is kinda an icky
+  // api. 
+  options = options || {};
+  if (options.middleX) this._containMiddleX = true;
+  if (options.middleY) this._containMiddleY = true;
   this._containment = el;
   return this;
 };
@@ -179,5 +203,18 @@ Draggable.prototype.containment = function(el){
 
 Draggable.prototype.handle = function(el){
   this._handle = el;
+  return this;
+};
+
+
+/**
+ * moveTo a specific spot.
+ * @param  {Number} x 
+ * @param  {Number} y 
+ * @return {Draggable}   
+ */
+
+Draggable.prototype.moveTo = function(x, y){
+  translate(this.el, x, y);
   return this;
 };

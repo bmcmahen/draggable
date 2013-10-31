@@ -4,15 +4,15 @@
 #draggable {
   position: absolute;
   background: #eee;
-  width: 100px;
-  height: 100px;
+  width: 30px;
+  height: 80px;
   cursor: move;
   -webkit-transition: all 0.3s;
   transition: all 0.3s;
 }
 
 #parent {
-  height: 300px;
+  height: 80px;
   border: 1px solid #999;
   margin-top: 40px;
 }
@@ -43,7 +43,7 @@ var parent = document.querySelector('#parent');
 var handle = document.querySelector('#handle');
 var draggable = require('draggable')(el);
 draggable
-  .containment(parent)
+  .containment(parent, { middleX : true })
   .build();
 
 draggable.on('end', function(){
