@@ -12,7 +12,7 @@
 }
 
 #parent {
-  height: 80px;
+  height: 400px;
   border: 1px solid #999;
   margin-top: 40px;
 }
@@ -44,8 +44,6 @@ var handle = document.querySelector('#handle');
 var draggable = require('draggable')(el);
 draggable
   .containment(parent)
-  .minLeft(40)
-  .maxLeft(100)
   .build();
 
 draggable.on('end', function(){
